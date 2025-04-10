@@ -1,0 +1,48 @@
+* CLI Creatures
+
+** The CLI
+
+The command line interface itself is multi-faceted. It is both how to play the game, discover new cards, and more.
+
+*** ~creature discover~
+
+About twice a day, one is able to generate ten cards and add them into their card collection. The cards may be of different types, i.e. a recipe, a creature, a material, a support, or an item.
+
+*** ~creature craft~
+
+The entry point for crafting. Running it with no arguments will display available recipes.
+
+*** ~creature battle~
+
+The entry point for battling.
+
+Solo "AI" levels with fixed card collections for rewards.
+
+**** About Battling
+
+Turn-based. Flip coin to see who is first.
+
+Every turn, each player has the ability to attach =Creation= to one of their cards in play. =Creation= is often required by creatures to activate abilities, perform attacks, and more.
+
+*** ~creature war~
+
+The entry point for waging war. Requires multiple card collections. Different battle-fronts to choose from, ranging in amount of card collections required and difficulty. Basically like starting an =N=-battle tournament
+
+*** ~creature shop~
+
+The entry point for buying or selling items. Some items will reset daily, others never reset.
+
+*** ~creature burn~
+
+Destroy a card from one of your collections permanently.
+
+*** ~creature list~
+
+Display all creations (creatures, materials, etc.)
+
+
+** The Library
+
+- ~creat_list~ :: Return vector of all creations stored in this reality.
+- ~creat_add~ :: Add a creation to be stored in this reality.
+- ~creat_remove~ :: Remove a creation stored in this reality.
