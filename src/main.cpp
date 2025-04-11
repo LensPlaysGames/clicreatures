@@ -7,6 +7,19 @@
 std::string display_card_basic(const Card &card) {
     std::string out;
 
+    switch (card.rarity) {
+    case CardRarity::Common: break;
+    case CardRarity::Exciting:
+        out += "!! ";
+        break;
+    case CardRarity::UltraRare:
+        out += "!RARE! ";
+        break;
+    case CardRarity::Legendary:
+        out += "!LEGENDARY! ";
+        break;
+    }
+
     switch (card.type) {
     case CardType::Creature:
         out += "Creature: ";
@@ -25,8 +38,14 @@ std::string display_card_basic(const Card &card) {
 }
 
 int main(int argc, char** argv) {
+    auto r = creat_init_reality();
+
     auto cards = creat_discover();
-    for (const auto &c : cards) {
+    r.cards.insert(r.cards.end(), cards.begin(), cards.end());
+
+    for (const auto &c : r.cards) {
         printf("%s", display_card_basic(c).data());
     }
+
+    return 0;
 }

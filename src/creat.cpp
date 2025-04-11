@@ -1,7 +1,13 @@
-#include <array>
 #include <vector>
+#include <random>
+#include <printf.h>
 
 #include <creat.h>
+
+Reality creat_init_reality() {
+    // TODO: Persistent cards
+    return {};
+}
 
 std::vector<Card> creat_list(const Reality& r) {
     return r.cards;
@@ -11,47 +17,63 @@ void creat_add(Reality& r, const Card &card) {
     r.cards.push_back(card);
 }
 
+std::vector<Card> get_all_cards() {
+    std::vector<Card> out{
+#include <all_cards.txt>
+    };
+    return out;
+}
+
+constexpr unsigned long convert_rarity_to_weight(CardRarity rarity) {
+    switch (rarity) {
+    case CardRarity::Common: return 900;
+    case CardRarity::Exciting: return 90;
+    case CardRarity::UltraRare: return 9;
+    case CardRarity::Legendary: return 1;
+    }
+    return 0;
+}
+
 std::vector<Card> creat_discover() {
+    auto all_cards = get_all_cards();
 
-    // TODO: We need a better way to obtain the list of all possible cards here.
-    const Card material_wood {
-        CardType::Material,
-        "Lempur Wood",
-        "Wood from a Lempur tree, found in the Drestra region."
-    };
+    // Confidence Check
+    if (all_cards.empty()) {
+        fprintf(stderr, "ERROR: All cards vector is empty... how can we discover cards if there are none to discover?\n");
+        return {};
+    }
 
-    const Card material_grass {
-        CardType::Material,
-        "Sinch Grass",
-        "Especially long and strong grass, found in the Drestra region. Great source of fiber."
-    };
+    // Randomly select cards from pool of available cards.
 
-    const Card material_scara {
-        CardType::Material,
-        "Scara Beatle",
-        "Large beatles found in the Drestra region. Sharp pincers and sticky claws make these beatles useful to inventors and tamers alike. Great source of protein."
-    };
+    // TODO: A rope data structure would mean we don't have to recalc weights
+    // and stuff. Perfect for walking, too.
+    unsigned long total_weight{0};
+    for (const Card &c : all_cards) {
+        total_weight += convert_rarity_to_weight(c.rarity);
+    }
+    // printf("total weight: %lu\n", total_weight);
 
-    const Card creature_caerbannog {
-        CardType::Creature,
-        "Caerbannog",
-        "Innocent mouse-like bunny creature. Fits in the hand. Peaceful unless provoked. Extremely fatal, though often it's an eye for an eye."
-    };
-
-    const Card creature_soyboy {
-        CardType::Creature,
-        "Soyboy",
-        "Anomaly with young soybean plants sometimes \"learning\" to walk. Territorial. Eats Scara Beatles, Sinch Grass, and Glow Ferns."
-    };
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> dist(0, total_weight);
 
     std::vector<Card> out;
 
-    // TODO: Randomly select cards from pool of available cards.
-    out.push_back(material_wood);
-    out.push_back(material_grass);
-
-    out.push_back(creature_caerbannog);
-    out.push_back(creature_soyboy);
+    constexpr int discover_amount = 4;
+    for (int i = 0; i < discover_amount; ++i) {
+        // Generate a random weight.
+        int random_number = dist(rng);
+        // printf("generated weight: %i\n", random_number);
+        // Iterate cards until we get to a card that exhausts the randomized weight.
+        for (const Card &c : all_cards) {
+            random_number -= convert_rarity_to_weight(c.rarity);
+            // printf("    reduced to %i by card %s\n", random_number, c.info.name.data());
+            if (random_number <= 0) {
+                out.push_back(c);
+                break;
+            }
+        }
+    }
 
     return out;
 }
