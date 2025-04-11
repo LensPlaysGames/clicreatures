@@ -66,7 +66,7 @@ std::vector<Card> creat_discover() {
         for (const Card &c : all_cards) {
             random_number -= convert_rarity_to_weight(c.rarity);
             if (random_number <= 0) {
-                out.push_back(c);
+                out.emplace_back(c);
                 break;
             }
         }
