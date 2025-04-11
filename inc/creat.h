@@ -31,7 +31,6 @@ enum class CardRarity : uint8_t {
 };
 
 struct Card {
-    uint64_t id;
     CardType type;
     CardRarity rarity;
     // TODO: In the future, things like the name and description could be
