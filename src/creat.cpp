@@ -51,7 +51,6 @@ std::vector<Card> creat_discover() {
     for (const Card &c : all_cards) {
         total_weight += convert_rarity_to_weight(c.rarity);
     }
-    // printf("total weight: %lu\n", total_weight);
 
     std::random_device dev;
     std::mt19937 rng(dev());
@@ -63,11 +62,9 @@ std::vector<Card> creat_discover() {
     for (int i = 0; i < discover_amount; ++i) {
         // Generate a random weight.
         int random_number = dist(rng);
-        // printf("generated weight: %i\n", random_number);
         // Iterate cards until we get to a card that exhausts the randomized weight.
         for (const Card &c : all_cards) {
             random_number -= convert_rarity_to_weight(c.rarity);
-            // printf("    reduced to %i by card %s\n", random_number, c.info.name.data());
             if (random_number <= 0) {
                 out.push_back(c);
                 break;
