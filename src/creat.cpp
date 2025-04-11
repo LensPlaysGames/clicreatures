@@ -1,13 +1,9 @@
 #include <vector>
 #include <random>
+#include <fstream>
 #include <printf.h>
 
 #include <creat.h>
-
-Reality creat_init_reality() {
-    // TODO: Persistent cards
-    return {};
-}
 
 std::vector<Card> creat_list(const Reality& r) {
     return r.cards;
@@ -22,6 +18,45 @@ std::vector<Card> get_all_cards() {
 #include <all_cards.txt>
     };
     return out;
+}
+
+Reality creat_init_reality() {
+    // Persistent cards (populate .obtained).
+    std::vector<IdAndCount> obtained{};
+    std::ifstream infile;
+    constexpr auto obtained_cards_path= "obtainedcards.dat";
+    infile.open(obtained_cards_path, std::ios::binary | std::ios::in);
+    if (infile.is_open()) {
+        uint64_t count{0};
+        infile.read((char*)&count, sizeof(decltype(count)));
+        IdAndCount data{};
+        for (decltype(count) i = 0; i < count; ++i) {
+            infile.read((char*)&data, sizeof(IdAndCount));
+            obtained.emplace_back(data);
+        }
+        infile.close();
+    } else {
+        printf("Could not open obtained cards data at \"%s\"\n", obtained_cards_path);
+    }
+
+    return {get_all_cards(), obtained};
+}
+
+void creat_save_obtained(const Reality& r) {
+    std::ofstream outfile;
+    constexpr auto obtained_cards_path= "obtainedcards.dat";
+    outfile.open(obtained_cards_path, std::ios::binary | std::ios::out);
+    if (outfile.is_open()) {
+        printf("r.obtained.size(): %zu\n", r.obtained.size());
+        uint64_t count{r.obtained.size()};
+        outfile.write((char*)&count, sizeof(decltype(count)));
+        for (auto data : r.obtained)
+            outfile.write((char*)&data, sizeof(IdAndCount));
+
+        outfile.close();
+    } else {
+        printf("Could not save obtained cards data at \"%s\"\n", obtained_cards_path);
+    }
 }
 
 constexpr unsigned long convert_rarity_to_weight(CardRarity rarity) {

@@ -4,6 +4,7 @@
 
 #include <creat.h>
 
+[[nodiscard]]
 std::string display_card_basic(const Card &card) {
     std::string out;
 
@@ -39,20 +40,42 @@ std::string display_card_basic(const Card &card) {
 
 enum class ProgramOperation {
     Discover,
+    List,
     Burn,
 };
 
 void discover(Reality& r) {
-    auto cards = creat_discover();
-    r.cards.insert(r.cards.end(), cards.begin(), cards.end());
-
-    for (const auto &c : r.cards) {
+    auto obtained_cards = creat_discover();
+    for (const auto &c : obtained_cards) {
         printf("%s", display_card_basic(c).data());
+        // TODO: find id in r.obtained, add to quantity, OR, if not in r.obtained,
+        // add new entry with quantity of 1 to r.obtained. Smells like a set.
+        bool found{false};
+        for (auto& x : r.obtained) {
+          if (x.id == c.id) {
+              found = true;
+              ++x.quantity;
+          }
+        }
+        if (not found) {
+            r.obtained.emplace_back(IdAndCount{c.id, 1});
+        };
+    }
+}
+
+void list(const Reality &r) {
+    for (auto x : r.obtained) {
+        for (const auto& c : r.cards) {
+            if (c.id == x.id) {
+                printf("%6zux  %s", x.quantity, display_card_basic(c).data());
+                break;
+            }
+        }
     }
 }
 
 void burn(Reality& r) {
-    printf("TODO: burn cards");
+    printf("TODO: burn cards\n");
 }
 
 int main(int argc, char** argv) {
@@ -63,7 +86,9 @@ int main(int argc, char** argv) {
         if (operative_word == "burn") {
             program_op = ProgramOperation::Burn;
         }
-        else if (operative_word == "discover") {
+        else if (operative_word == "list") {
+            program_op = ProgramOperation::List;
+        } else if (operative_word == "discover") {
             program_op = ProgramOperation::Discover;
         } else {
             printf("ERROR: Invalid argument in operative word position: \"%s\"\n", operative_word.data());
@@ -84,6 +109,11 @@ int main(int argc, char** argv) {
         if (not args.empty())
             printf("ERROR: Ignoring arguments given, as discover operative word takes no arguments.\n");
         discover(r);
+        creat_save_obtained(r);
+        break;
+
+    case ProgramOperation::List:
+        list(r);
         break;
 
     case ProgramOperation::Burn:
