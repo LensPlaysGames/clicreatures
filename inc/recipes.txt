@@ -1,0 +1,2 @@
+{id(), {{1, "Wooden Shield"}}, {{2, "Lempur Wood"}, {2, "Sinch Rope"}}},
+{id(), {{1, "Sinch Rope"}}, {{2, "Sinch Grass"}}},

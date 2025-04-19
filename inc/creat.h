@@ -31,6 +31,7 @@ enum class CardRarity : uint8_t {
 };
 
 typedef uint64_t creat_id_t;
+enum CreatIdInvalid { InvalidID = uint64_t(-1) };
 
 struct Card {
     creat_id_t id;
@@ -42,6 +43,10 @@ struct Card {
     Info info;
     std::vector<Attack> moves;
 
+    explicit Card() {
+        id = InvalidID;
+    }
+
     Card(creat_id_t _id, CardType _type, CardRarity _rarity, std::string name, std::string description) {
         id = _id;
         type = _type;
@@ -52,11 +57,30 @@ struct Card {
 };
 
 struct IdAndCount { creat_id_t id; uint64_t quantity; };
+struct NameAndCount { uint64_t quantity; std::string name; };
+
+struct Recipe {
+    creat_id_t id;
+    std::vector<NameAndCount> output;
+    std::vector<NameAndCount> input;
+
+    explicit Recipe() { id = InvalidID; }
+
+    Recipe(creat_id_t _id, std::vector<NameAndCount> _output,
+           std::vector<NameAndCount> _input) {
+        id = _id;
+        output = _output;
+        input = _input;
+    }
+};
 
 struct Reality {
     // Card data.
-    // TODO: Vector/Hash table by id, depending on number of elements.
     std::vector<Card> cards;
+
+    // Recipe data.
+    std::vector<Recipe> recipes;
+
     // The cards obtained.
     std::vector<IdAndCount> obtained;
 };
@@ -65,8 +89,8 @@ Reality creat_init_reality();
 // TODO: This should not be here.
 void creat_save_obtained(const Reality& r);
 
-std::vector<Card> creat_list(const Reality&);
-void creat_add(Reality&, const Card&);
-// void creat_remove(const Card& card);
-
 std::vector<Card> creat_discover();
+
+bool creat_craft(Reality &r, creat_id_t recipe_id);
+creat_id_t
+recipe_id_by_single_output_name(const Reality &r, std::string output_name);
