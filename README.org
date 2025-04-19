@@ -12,6 +12,19 @@ About twice a day, one is able to generate ten cards and add them into their car
 
 The entry point for crafting. Running it with no arguments will display available recipes.
 
+#+begin_example
+Lempur Wooden Shield
+|-- Improvised Rope
+|   |-- Sinch Grass
+|   `-- Sinch Grass
+|-- Lempur Wood
+`-- Lempur Wood
+
+Improvised Rope
+|-- Sinch Grass
+`-- Sinch Grass
+#+end_example
+
 *** ~creature battle~
 
 The entry point for battling.
@@ -39,10 +52,3 @@ Destroy a card from one of your collections permanently.
 *** ~creature list~
 
 Display all creations (creatures, materials, etc.)
-
-
-** The Library
-
-- ~creat_list~ :: Return vector of all creations stored in this reality.
-- ~creat_add~ :: Add a creation to be stored in this reality.
-- ~creat_remove~ :: Remove a creation stored in this reality.
