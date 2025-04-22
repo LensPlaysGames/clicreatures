@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <cstdint>
+#include <sstream>
 
 struct Info {
     std::string name;
@@ -21,6 +22,7 @@ struct Attack {
 enum class CardType : uint8_t {
     Creature,
     Material,
+    Item,
 };
 
 enum class CardRarity : uint8_t {
@@ -86,8 +88,8 @@ struct Reality {
 };
 
 Reality creat_init_reality();
-// TODO: This should not be here.
-void creat_save_obtained(const Reality& r);
+[[nodiscard]]
+std::ostringstream creat_save_obtained(const Reality& r);
 
 std::vector<Card> creat_discover();
 

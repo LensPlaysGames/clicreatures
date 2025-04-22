@@ -1,6 +1,7 @@
 // CLICreatures by Rylan Kellogg
 
 #include <format>
+#include <fstream>
 
 #include <creat.h>
 
@@ -27,6 +28,9 @@ std::string display_card_basic(const Card &card) {
         break;
     case CardType::Material:
         out += "Material: ";
+        break;
+    case CardType::Item:
+        out += "Item: ";
         break;
     }
 
@@ -97,6 +101,20 @@ void craft(Reality& r, std::string output_name) {
     printf("Successfully crafted \"%s\" (recipe id %u)\n", output_name.data(), (unsigned)recipe_id);
 }
 
+void save_obtained(const Reality &r) {
+    constexpr auto* path = "obtainedcards.dat";
+    std::ofstream outfile{};
+    outfile.open(path, std::ios::binary);
+    if (outfile.is_open()) {
+        auto outdata = creat_save_obtained(r);
+        auto outdata_string = outdata.rdbuf()->str();
+        outfile.write(outdata_string.data(), outdata_string.size());
+        outfile.close();
+    } else {
+        printf("Could not open file at \"%s\" for saving...\n", path);
+    }
+}
+
 int main(int argc, char** argv) {
     ProgramOperation program_op{ProgramOperation::Discover};
 
@@ -131,7 +149,7 @@ int main(int argc, char** argv) {
         if (not args.empty())
             printf("ERROR: Ignoring arguments given, as discover operative word takes no arguments.\n");
         discover(r);
-        creat_save_obtained(r);
+        save_obtained(r);
         break;
 
     case ProgramOperation::List:
@@ -142,7 +160,7 @@ int main(int argc, char** argv) {
 
     case ProgramOperation::Burn:
         burn(r);
-        creat_save_obtained(r);
+        save_obtained(r);
         break;
 
     case ProgramOperation::Craft:
@@ -154,7 +172,7 @@ int main(int argc, char** argv) {
             printf("ERROR: Ignoring additional arguments given, as craft operative word takes one argument.\nYou may want to put quotes around them, if you meant to type one name with multiple words.\n");
         }
         craft(r, args.at(0));
-        creat_save_obtained(r);
+        save_obtained(r);
         break;
     }
     return 0;

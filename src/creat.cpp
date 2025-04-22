@@ -159,21 +159,15 @@ Reality creat_init_reality() {
     return {get_all_cards(), get_all_recipes(), obtained};
 }
 
-void creat_save_obtained(const Reality& r) {
-    std::ofstream outfile;
-    constexpr auto obtained_cards_path= "obtainedcards.dat";
-    outfile.open(obtained_cards_path, std::ios::binary | std::ios::out);
-    if (outfile.is_open()) {
-        //printf("r.obtained.size(): %zu\n", r.obtained.size());
-        uint64_t count{r.obtained.size()};
-        outfile.write((char*)&count, sizeof(decltype(count)));
-        for (auto data : r.obtained)
+std::ostringstream creat_save_obtained(const Reality& r) {
+    std::ostringstream outfile{};
+    //printf("r.obtained.size(): %zu\n", r.obtained.size());
+    uint64_t count{r.obtained.size()};
+    outfile.write((char*)&count, sizeof(decltype(count)));
+    for (auto data : r.obtained)
             outfile.write((char*)&data, sizeof(IdAndCount));
 
-        outfile.close();
-    } else {
-        printf("Could not save obtained cards data at \"%s\"\n", obtained_cards_path);
-    }
+    return outfile;
 }
 
 constexpr unsigned long convert_rarity_to_weight(CardRarity rarity) {

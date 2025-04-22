@@ -27,3 +27,10 @@ target_include_directories(creature PUBLIC inc)
 target_link_libraries(creature PUBLIC creatlib)
 
 add_dependencies(creature creatlib)
+
+# Add warning flags
+if (MSVC)
+    add_compile_options(/W4 /WX)
+else()
+    add_compile_options(-Wall -Wextra -pedantic -Werror)
+endif()
